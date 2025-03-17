@@ -32,8 +32,7 @@ void DoubleArrayTrie::build(std::vector<std::string_view> patterns) {
     std::sort(patterns.begin(), patterns.end());
 
     int base = 1;
-    reserve(base + std::numeric_limits<unsigned char>::max() + 1);
-    base_[0] = base;
+    setBase(0, base);
     std::stack<std::tuple<size_t, int, int, int>> st;
     st.emplace(0, 0, patterns.size(), -1);
     while (!st.empty()) {       
@@ -69,8 +68,7 @@ void DoubleArrayTrie::build(std::vector<std::string_view> patterns) {
                 }
             }
             if (ok) {
-                reserve(base + std::numeric_limits<unsigned char>::max() + 1);
-                base_[node_id] = base;
+                setBase(node_id, base);
                 for (unsigned char ch : children) {
                     check_[base + ch] = node_id;
                 }
@@ -86,12 +84,14 @@ void DoubleArrayTrie::build(std::vector<std::string_view> patterns) {
     match_.shrink_to_fit();
 }
 
-void DoubleArrayTrie::reserve(size_t s) {
+void DoubleArrayTrie::setBase(int node_id, int base) {
+    size_t s = base + std::numeric_limits<unsigned char>::max() + 1;
     while (base_.size() < s) {
         base_.push_back(-1);
         check_.push_back(-1);
         match_.emplace_back(false);
     }
+    base_[node_id] = base;
 }
 
 int DoubleArrayTrie::findNode(int node_id, char c) const {

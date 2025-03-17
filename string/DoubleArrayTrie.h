@@ -28,7 +28,7 @@ public:
 
 private:
     void build(std::vector<std::string_view> patterns);
-    void reserve(size_t s);
+    void setBase(int node_id, int base);
 
     std::vector<int> base_;
     std::vector<int> check_;
